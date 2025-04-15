@@ -165,11 +165,10 @@ ElevatedButton(
 ```
 
 ## Conclusion
-This project serves as a simple demonstration of how to use the `flutter_local_notifications` package to display local notifications in a Flutter application. The `NotificationService` class encapsulates the logic for managing notifications, and the app provides a user interface for triggering notifications.
-
-Here are some example images of the app in action:
+This project serves as a simple demonstration of how to use the `flutter_local_notifications` package to display local notifications in a Flutter application. The `NotificationService` class encapsulates the logic for managing notifications, and the app provides a user interface for triggering notifications. Here are some example images of the app in action,
 
 You will see the following app after running the project:
+
 <img src="example/image-1.png" alt="Example Image 1" width="250" />
 
 When you click the "Show Notification" button, a notification will appear in the notification tray:
