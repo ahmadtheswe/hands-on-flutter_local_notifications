@@ -17,11 +17,11 @@ To get started with the project, follow these steps:
 - Run the app on an emulator or physical device. 
 - Install dependencies by running this command in the terminal.
 ```bash
-`flutter pub get`
+flutter pub get
 ```
 - Run the app using the following command:
 ```bash
-`flutter run`
+flutter run
 ```
 
 ## Important Note
