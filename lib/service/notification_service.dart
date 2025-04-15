@@ -1,5 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   NotificationService._internal();
@@ -12,6 +14,8 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
+    tz.initializeTimeZones();
+
     AndroidInitializationSettings initializationSettingsAndroid =
         const AndroidInitializationSettings('@mipmap/ic_launcher');
 
@@ -63,4 +67,38 @@ class NotificationService {
       payload: payload,
     );
   }
+
+  Future<void> scheduleNotification({
+    required String title,
+    required String body,
+    required DateTime scheduledTime,
+    String? payload,
+  }) async {
+    var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+      'scheduled_channel_id',
+      'Scheduled Notifications',
+      channelDescription: 'Channel for scheduled notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    var iOSPlatformChannelSpecifics = const DarwinNotificationDetails();
+
+    var platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+      iOS: iOSPlatformChannelSpecifics,
+    );
+
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      1,
+      title,
+      body,
+      tz.TZDateTime.from(scheduledTime, tz.local),
+      platformChannelSpecifics,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time, // Optional
+      payload: payload,
+    );
+  }
+
 }
