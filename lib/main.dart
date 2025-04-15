@@ -48,7 +48,16 @@ class _MyHomePageState extends State<MyHomePage> {
               NotificationService().showNotification(title: 'Sample notification', body: 'It works!');
             }, child: Column(
               children: [
-                Text('Click Me!'),
+                Text('Regular Notification'),
+              ],
+            )),
+            ElevatedButton(onPressed: () {
+              final now = DateTime.now();
+              final scheduledTime = now.add(Duration(seconds: 20));
+              NotificationService().scheduleNotification(title: 'Sample notification', body: 'It works!', scheduledTime: scheduledTime);
+            }, child: Column(
+              children: [
+                Text('Scheduled Notification'),
               ],
             ))
           ],

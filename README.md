@@ -183,3 +183,79 @@ D/InsetsController( 6843): hide(ime(), fromIme=false)
 I/ImeTracker( 6843): com.ahmadtheswe.push_notification:da74e3be: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
 E/libEGL  ( 6843): called unimplemented OpenGL ES API
 ```
+
+## Scheduled Notifications
+
+To setup scheduled notifications, you need to add the `timezone` package to your `pubspec.yaml` file in the dependencies section. This package is required for handling time zones and scheduling notifications at specific times:
+```yaml
+dependencies:
+  timezone: ^0.10.0
+```
+
+Install the package by running the following command:
+```bash
+flutter pub get
+```
+
+After adding the `timezone` package, you need to initialize the time zone database. You can do this by calling the `initializeTimeZones` method in the `init` method of the `NotificationService` class:
+```dart
+...
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
+Future<void> init() async {
+  tz.initializeTimeZones();
+  ...
+}
+```
+
+To schedule a notification, you can use the `scheduleNotification` method in the `NotificationService` class. This method allows you to specify the date and time for the notification to be triggered. The following code demonstrates how to schedule a notification:
+```dart
+Future<void> scheduleNotification({
+  required String title,
+  required String body,
+  required DateTime scheduledTime,
+  String? payload,
+}) async {
+  var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+    'scheduled_channel_id',
+    'Scheduled Notifications',
+    channelDescription: 'Channel for scheduled notifications',
+    importance: Importance.max,
+    priority: Priority.high,
+  );
+
+  var iOSPlatformChannelSpecifics = const DarwinNotificationDetails();
+
+  var platformChannelSpecifics = NotificationDetails(
+    android: androidPlatformChannelSpecifics,
+    iOS: iOSPlatformChannelSpecifics,
+  );
+
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+    1,
+    title,
+    body,
+    tz.TZDateTime.from(scheduledTime, tz.local),
+    platformChannelSpecifics,
+    androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+    matchDateTimeComponents: DateTimeComponents.time, // Optional
+    payload: payload,
+  );
+}
+```
+
+This is the example of how to use the `scheduleNotification` method in [main.dart](lib/main.dart):
+```dart
+ElevatedButton(onPressed: () {
+  final now = DateTime.now();
+  final scheduledTime = now.add(Duration(seconds: 20));
+  NotificationService().scheduleNotification(title: 'Sample notification', body: 'It works!', scheduledTime: scheduledTime);
+}, child: Column(
+  children: [
+    Text('Scheduled Notification'),
+  ],
+))
+```
+
+You can change the `scheduledTime` to any future date and time. The notification will be triggered at the specified time from line `final scheduledTime = now.add(Duration(seconds: 20));`. 
